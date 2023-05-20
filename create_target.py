@@ -41,7 +41,7 @@ def get_worker_info(name):
 
     # 执行查询
     cursor = db.cursor()
-    c = cursor.execute(sql, (name,))
+    cursor.execute(sql, (name,))
     ret = cursor.fetchone()
     # 关闭数据库连接
     cursor.close()
@@ -85,40 +85,38 @@ df['加班工资'] = np.subtract(real_moneys, np.multiply(df['本月工作量'],
 df[['完成工作量', '借支', '农民工签字', '工资卡类别', '金额', '备注', '个人确认签字', '领款签字', '离场时间', '扣个税']] = np.nan
 
 # 1. 农民工花名册
-columns_order_民工花名册 = ['序号', '姓名', '身份证', '性别', '工种', '电话', '家庭住址', '合同签订时间', '进场时间', '离场时间']
-df1 = df[columns_order_民工花名册]
-output_path_民工花名册 = "民工花名册.xlsx"
-df1.to_excel(output_path_民工花名册, index=False)
+columns_order_basic_paper: list[str] = ['序号', '姓名', '身份证', '性别', '工种', '电话', '家庭住址', '合同签订时间', '进场时间', '离场时间']
+df1 = df[columns_order_basic_paper]
+output_path_basic_paper = "民工花名册.xlsx"
+df1.to_excel(output_path_basic_paper, index=False)
 
-print(f"生成 {output_path_民工花名册} 成功")
+print(f"生成 {output_path_basic_paper} 成功")
 
 # 2. 农民工工资表
-columns_order_民工工资表 = ['序号', '姓名', '身份证', '工种', '累计工作量', '本月工作量', '单价/天', '加班工资',
+columns_order_salary_table = ['序号', '姓名', '身份证', '工种', '累计工作量', '本月工作量', '单价/天', '加班工资',
                               '本月应发工资', '实发工资', '农民工签字']
-df2 = df[columns_order_民工工资表]
-output_path_民工工资表 = "民工工资表.xlsx"
-df2.to_excel(output_path_民工工资表, index=False)
+df2 = df[columns_order_salary_table]
+output_path_salary_table = "民工工资表.xlsx"
+df2.to_excel(output_path_salary_table, index=False)
 
-print(f"生成 {output_path_民工工资表} 成功")
+print(f"生成 {output_path_salary_table} 成功")
 
 # 农民工工资代发明细表
-columns_order_民工工资代发明细表 = ['序号', '姓名', '银行卡号', '工资卡类别', '身份证', '电话', '本月应发工资',
-                                      '建行开户行', '备注']
-df3 = df[columns_order_民工工资代发明细表]
-output_path_民工工资代发明细表 = "民工工资代发明细表.xlsx"
-df3.to_excel(output_path_民工工资代发明细表, index=False)
+columns_order_salary_delivery_table = ['序号', '姓名', '银行卡号', '工资卡类别', '身份证', '电话', '本月应发工资', '建行开户行', '备注']
+df3 = df[columns_order_salary_delivery_table]
+output_path_salary_delivery_table = "民工工资代发明细表.xlsx"
+df3.to_excel(output_path_salary_delivery_table, index=False)
 
-print(f"生成 {output_path_民工工资代发明细表} 成功")
+print(f"生成 {output_path_salary_delivery_table} 成功")
 
 # 项目工人工资确认发放表
-columns_order_工资确认发放表 = ['序号', '姓名', '性别', '身份证', '电话', '银行卡号', '单价/天', '本月工作量',
-                                        '单价/量', '完成工作量', '加班工资', '本月应发工资', '借支', '实发工资',
-                                        '个人确认签字', '领款签字', '备注']
-df4 = df[columns_order_工资确认发放表]
-output_path_工资确认发放表 = "工资确认发放表.xlsx"
-df4.to_excel(output_path_工资确认发放表, index=False)
+columns_order_salary_confirm_table = ['序号', '姓名', '性别', '身份证', '电话', '银行卡号', '单价/天', '本月工作量', '单价/量', '完成工作量', '加班工资',
+                                      '本月应发工资', '借支', '实发工资', '个人确认签字', '领款签字', '备注']
+df4 = df[columns_order_salary_confirm_table]
+output_path_salary_confirm_table = "工资确认发放表.xlsx"
+df4.to_excel(output_path_salary_confirm_table, index=False)
 
-print(f"生成 {output_path_工资确认发放表} 成功")
+print(f"生成 {output_path_salary_confirm_table} 成功")
 
 # 劳工工资表
 isLabor = False
@@ -126,13 +124,12 @@ if isLabor:
     months = 4
     df['扣个税'] = np.subtract(df['应领工资'], 5000 * (months + 1)).multiply(0.03)
     df['扣个税'] = [i if i >= 0 else 0 for i in df['扣个税']]
-    columns_order_劳工工资表 = ['序号', '姓名', '身份证', '出勤天数', '单价/天', '应领工资', '扣个税', '实发工资',
-                                '个人确认签字']
-    df5 = df[columns_order_劳工工资表]
-    output_path_劳工工资表 = "劳工工资表.xlsx"
-    df5.to_excel(output_path_劳工工资表, index=False)
+    columns_order_labor_salary_table = ['序号', '姓名', '身份证', '出勤天数', '单价/天', '应领工资', '扣个税', '实发工资', '个人确认签字']
+    df5 = df[columns_order_labor_salary_table]
+    output_path_labor_salary_table = "劳工工资表.xlsx"
+    df5.to_excel(output_path_labor_salary_table, index=False)
 
-    print(f"生成 {output_path_劳工工资表} 成功")
+    print(f"生成 {output_path_labor_salary_table} 成功")
 
 
 # 优化输出表格的格式
@@ -156,8 +153,8 @@ def reset_col(filename):
 
         # 指定区域单元格居中
         ws_area = ws["A1:J100"]
-        for i in ws_area:
-            for j in i:
+        for area in ws_area:
+            for j in area:
                 j.alignment = alignment_center
 
     wb.save(filename)
